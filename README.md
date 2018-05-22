@@ -1,2 +1,2 @@
-# EuropeanaHelpers
-Contains tools to retrieve collections from Europeana API 
+# EuropeanaApiHelpers
+Contains tools to retrieve collections from Europeana API

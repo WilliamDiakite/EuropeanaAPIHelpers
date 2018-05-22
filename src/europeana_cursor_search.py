@@ -46,13 +46,15 @@ if __name__ == '__main__':
                     cursorMark = nextCursor
 
                 except KeyError:
+                    os.remove('tmp.json')
                     break
 
         if args.col.endswith('.txt'):
             try:
                 with open(args.col) as f:
                     to_keep = [s.rstrip() for s in f]
-                    items = [{k: i[k] for k in i if k in to_keep} for i in items]
+                    items = [{k: i[k] for k in i if k in to_keep}
+                             for i in items]
             except Exception:
                 print('\n\n[ ! ] Cannot open', args.col)
                 exit()
