@@ -30,7 +30,6 @@ if __name__ == '__main__':
             cmd = 'curl ' + new_query + ' > tmp.json'
             print('\n\n', cmd, '\n')
             os.system(cmd)
-            print('\n\n======================================================')
 
             # Parse current API response
             with open('tmp.json') as f:
@@ -44,12 +43,15 @@ if __name__ == '__main__':
                     # Retrive next markup
                     nextCursor = data['nextCursor']
                     cursorMark = nextCursor
+                    print('NEXT CURSOR:', nextCursor)
+                    print('\n\n======================================================')
 
                 except KeyError:
                     os.remove('tmp.json')
                     break
 
-        if args.col.endswith('.txt'):
+        # Filter column labels
+        if args.col is not None:
             try:
                 with open(args.col) as f:
                     to_keep = [s.rstrip() for s in f]
@@ -59,7 +61,7 @@ if __name__ == '__main__':
                 print('\n\n[ ! ] Cannot open', args.col)
                 exit()
 
-        print('[ + ] Items found:', len(items))
+        print('\n\n[ + ] Items found:', len(items))
 
         # Save data to csv
         with open(args.file_path, 'w') as f:
@@ -74,4 +76,10 @@ if __name__ == '__main__':
             writer.writeheader()
             writer.writerows(items)
 
-            pprint(sorted(header))
+        # write column labels
+        filename = args.file_path[:-4] + 'columns.txt'
+        with open(filename, 'w') as f:
+            str_header = '\n'.join(header)
+            f.write(str_header)
+
+        print('\n[ + ] Done retrieving data\n\n')
