@@ -1,4 +1,6 @@
 #!flask/bin/python
+import os
+
 from flask import Flask, render_template, request, Response
 
 from api_caller import execute_query
@@ -10,6 +12,8 @@ SESSION_TYPE = 'memcache'
 
 app = Flask(__name__)
 
+if not os.path.isdir('./tmp/'):
+    os.mkdir('./tmp/')
 
 filters = {'items_type': '',
            'items_dataProvider': ''}
