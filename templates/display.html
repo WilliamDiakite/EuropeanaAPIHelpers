@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <div class="jumbotron">
+
+      <h4>Téléchargement</h4>
+      <hr class="my-4">
+      <br />
+      <div class="row">
+        <div class="col-4 col-sm-3">
+          <a href={{ csv }} class="cust" >Fichier CSV</a>
+        </div>
+        <div class="col-4 col-sm-3">
+          <a href={{ json }} class="cust">Fichier JSON</a>
+        </div>
+        <div class="col-4 col-sm-3">
+          <a href="" class="cust" >Fichier XML</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="jumbotron">
+      <h4>Aperçu</h4>
+      <hr class="my-4">
+      <br />
+      <p>10 résultats sur {{ len }}</p>
+      <br />
+
+      <div style="overflow: auto;">
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th style="width: 10%">ID</th>
+              <th style="width: 15%">Title</th>
+              <th style="width: 15%">Creator</th>
+              <th style="width: 10%">Creation Date</th>
+              <th style="width: 10%">Type</th>
+              <th style="width: 15%">Provider</th>
+              <th style="width: 15%">Country</th>
+              <th style="width: 10%">Preview</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in items[:10] %}
+              <tr>
+                <td>{{ i.items_id }}</td>
+                <td>{{ i.items_title }}</td>
+                <td>{{ i.items_dcCreator }}</td>
+                <td>{{ i.items_edmTimespanLabelLangAware_def }}</td>
+                <td>{{ i.items_type }}</td>
+                <td>{{ i.items_dataProvider }}</td>
+                <td>{{ i.items_country }}</td>
+                <td>{{ i.items_edmPreview }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  $(document).ready(function(){
+    $("#tuto").hide();
+  });
+  </script>
+{% endblock %}

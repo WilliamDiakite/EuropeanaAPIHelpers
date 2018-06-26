@@ -1,5 +1,6 @@
 from flask import flash
 import os
+import shutil
 
 
 def delete_tmp_content():
@@ -8,7 +9,7 @@ def delete_tmp_content():
     '''
     for f in os.listdir('./tmp/'):
         filename = './tmp/' + f
-        os.remove(filename)
+        shutil.rmtree(filename)
 
 
 def reset_usr_data(data):
@@ -72,18 +73,3 @@ def check_form(usr_data):
             flag = False
 
     return flag
-
-
-def parse_query(data):
-    base = 'https://www.europeana.eu/api/v2/search.json?wskey='
-
-    query = base + str(data['key'])
-
-    # Keywords
-    if len(data['keywords']) > 0:
-        keywords = data['keywords'].split(' ')
-        q1 = '&query=' + '"' + '+'.join(keywords) + '"'
-    else:
-        q1 = ''
-
-    return query + q1

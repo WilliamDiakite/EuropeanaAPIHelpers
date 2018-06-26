@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- imports -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- Loading static -->
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles.css') }}">
+
+    <title>Europeana Search</title>
+  </head>
+
+
+  <body>
+    {% with messages = get_flashed_messages() %}
+	   {% if messages %}
+	    {% for message in messages %}
+		      <div class="alert alert-warning alert-dismissible" role="alert">
+		      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			   {{message}}
+		    </div>
+		    {% endfor %}
+	   {% endif %}
+	   {% endwith %}
+
+    <header>
+      <div class="container">
+        <div class="jumbotron">
+          <br />
+          <a class="cust" href="/"><h1>Europeana Search API</h1></a>
+          <br />
+          <br />
+          <hr class="my-4">
+          <br />
+
+          <p align="center">
+            Europeana Search API est une application web simple permettant de constituer des corpus <br />à partir des collections disponibles sur <a href="https://www.europeana.eu/portal/fr">le portail d'Europeana</a>.
+            <br /><b>Cette application utilise sur l'<a href="https://pro.europeana.eu/resources/apis">API d'Europeana</a> et nécessite une clé publique.</b>
+          </p>
+          <div id="tuto">
+            <br />
+            <br />
+            <h5>Clé publique :</h5>
+            <p>Une clé publique est nécessaire pour vous authentifier auprès d'Europeana.<br />Pour récupérer une clé, rendez-vous sur <a href="https://pro.europeana.eu/get-api">cette page</a>.</p>
+            <br />
+            <h5>Conseils d'utilisation :</h5>
+            <ul>
+              <li><p>Entrez un mot clés,</p></li>
+              <li><p>Choisissez une période limite pour filtrer les résulats,</p></li>
+              <li><p>Pour une recherche plus précise : compléter les champs "auteur", "date de création", "provider" ou<br>
+                encore le "type" de document</p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {% block content %} {% endblock %}
+
+    <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+
+    <div class="container">
+        <div class="jumbotron">
+          <h4>Credits</h4>
+          <hr class="my-4">
+          <br />
+          <p>
+            Aidez-nous sur <a href=" https://github.com/Humanistica/ArtDesignDH">Github</a>
+            <br />
+            Version : alpha
+          </p>
+        </div>
+      </div>
+
+  </body>
+</html>

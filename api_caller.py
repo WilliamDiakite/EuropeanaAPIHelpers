@@ -1,97 +1,83 @@
 import os
-import csv
 import json
-import copy
+import random
 
-from unfold import unfold
+from json_csv_helper import unfold
+from data_manipulation import items_to_csv, clean_list, filter_dates, filter, \
+    parse_date
 
 labels = ['items_id', 'items_title', 'items_country', 'items_dataProvider',
           'items_type', 'items_edmTimespanLabelLangAware_def',
           'items_dcCreator', 'items_edmPreview']
 
 
-def clean_list(value):
-    if isinstance(value, list):
-        return ' '.join(value)
+def create_usr_directory(session):
+    '''
+        Create a unique user directory to store tmp data and output data
+        Needed when multiple request are made at the same time
+    '''
+    dir_name = str(session)
+
+    dir_path = './tmp/{}/'.format(dir_name)
+    if not os.path.isdir(dir_path):
+        os.mkdir(dir_path)
+
+    return dir_path
+
+
+def parse_query(data):
+    base = 'https://www.europeana.eu/api/v2/search.json?wskey='
+
+    query = base + str(data['key'])
+
+    # Keywords
+    if len(data['keywords']) > 0:
+        keywords = data['keywords'].split(' ')
+        q1 = '&query=' + '"' + '+'.join(keywords) + '"'
     else:
-        return value
+        q1 = ''
+
+    return query + q1
 
 
-def filter(items, filters):
-    new_items = [copy.deepcopy(i) for i in items]
-    to_remove = []
-    for i in range(len(items)):
-        for f in filters:
-            if len(filters[f]) > 0 and filters[f] != items[i][f]:
-                to_remove.append(items[i])
+def execute_query(usr_data, session):
 
-    for i in to_remove:
-        new_items.remove(i)
-
-    return new_items
-
-
-def parse_date(items):
-    new_items = []
-
-    for i in items:
-        try:
-            date = i['items_edmTimespanLabelLangAware_def']
-            date = date.split(' ')[0]
-        except KeyError:
-            date = '-1'
-
-        new_item = copy.deepcopy(i)
-        new_item.update({'items_edmTimespanLabelLangAware_def': date})
-        new_items.append(new_item)
-    return new_items
-
-
-def filter_dates(items, dates):
-    new_items = [copy.deepcopy(i) for i in items]
-    to_remove = []
-
-    date_from, date_to = dates[0], dates[1]
-
-    for i in items:
-        c_date = i['items_edmTimespanLabelLangAware_def']
-
-        if c_date[-2:] == '..':
-            new_c_date = c_date[:-2] + '00'
-            new_c_date = int(new_c_date)
-            if int(new_c_date) < int(date_from) or int(new_c_date) > int(date_to):
-                to_remove.append(i)
-        elif c_date == -1:
-            to_remove.append(i)
-        else:
-            if int(c_date) < int(date_from) or int(c_date) > int(date_to):
-                to_remove.append(i)
-
-    for i in to_remove:
-        new_items.remove(i)
-
-    return new_items
-
-
-def execute_query(query, filters, dates):
+    print('\nEXECUTING API REQUEST\n')
 
     cursorMark = '*'
     nextCursor = ''
     items = []
+    query_status = None
+    error = None
+
+    query = parse_query(usr_data)
+
+    # Create temporary dir to store usr data
+    dir_path = create_usr_directory(session)
 
     while(1):
-
         # Execute command and save data in tmp file
-        cmd = 'curl ' + '"' + query + '&cursor=' + cursorMark + '"' + \
-              ' > tmp/tmp.json'
+        tmp_path = dir_path + 'tmp.json'
+
+        cmd = 'curl ' + '"' + query + '&rows=100&cursor=' + \
+              cursorMark + '"' + ' > ' + tmp_path
+
         print('\n\n', cmd, '\n')
         os.system(cmd)
         print('\n\n======================================================')
 
         try:
             # Parse current API response
-            with open('tmp/tmp.json') as f:
+            with open(tmp_path) as f:
+
+                # Load query result
                 data = json.load(f)
+
+                # Display query status and error
+                query_status = data.get('success')
+                error = data.get('error')
+                print(query_status)
+                print(error)
 
                 try:
                     # Save current items
@@ -103,50 +89,38 @@ def execute_query(query, filters, dates):
                     cursorMark = nextCursor
 
                 except KeyError:
-                    os.remove('./tmp/tmp.json')
+                    os.remove(tmp_path)
                     break
         except json.decoder.JSONDecodeError:
-            return 0
+            return {'data': 'None', 'dir': 'None',
+                    'query_status': str(query_status), 'error': str(error)}
 
     # Write true csv
-    with open('tmp/true.csv', 'w') as f:
-        header = []
-        for i in items:
-            for k in i:
-                header.append(k)
-        header = list(set(header))
-        writer = csv.DictWriter(f, fieldnames=list(header))
-        writer.writeheader()
-        writer.writerows(items)
+    full_path = dir_path + 'full.csv'
+    items_to_csv(items, full_path)
 
-    # Filter items
+    # Keep dcterms only
     items = [{k: clean_list(i[k]) for k in i if k in labels} for i in items]
+
+    # Filter date
     items = parse_date(items)
-    if dates is not None:
-        items = filter_dates(items, dates)
-    items = filter(items, filters)
+    # if dates is not None:
+    #     items = filter_dates(items, dates)
+
+    # Test if any result
     print('[ + ] Items found:', len(items))
-
     if len(items) == 0:
-        return None
-
-    for i in items[-1]:
-        print(i, ' : ', items[-1][i])
+        return {'data': 'None', 'dir': 'None',
+                'query_status': str(query_status), 'error': str(error)}
 
     # Save data to csv
-    with open('./tmp/output.csv', 'w') as f:
-        header = []
-        for i in items:
-            for k in i:
-                header.append(k)
-        header = list(set(header))
-
-        writer = csv.DictWriter(f, fieldnames=list(header))
-        writer.writeheader()
-        writer.writerows(items)
+    output_path = dir_path + 'output.csv'
+    items_to_csv(items, output_path)
 
     # Save data to json
-    with open('./tmp/output.json', 'w') as f:
+    output_path = dir_path + 'output.json'
+    with open(output_path, 'w') as f:
         json.dump(items, f)
 
-    return items
+    return {'data': items, 'dir': str(session),
+            'query_status': query_status, 'error': error}
