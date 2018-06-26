@@ -1,10 +1,14 @@
+import os
 from celery import Celery
 from flask_socketio import SocketIO
 from api_caller import execute_query
 
 
-celery = Celery('demo', broker='amqp://')
+celery = Celery('europeana-search')
 socketio = SocketIO(message_queue='amqp:///socketio')
+
+celery.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+                   CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
 
 
 def send_message(event, namespace, room, message):
