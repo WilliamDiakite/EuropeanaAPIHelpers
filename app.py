@@ -171,12 +171,12 @@ def download_xml(dir_name):
                  "attachment; filename=europeana_data.xml"})
 
 
-@app.errorhandler(Exception)
-def handle_error(e):
-    code = 500
-    if isinstance(e, HTTPException):
-        code = e.code
-    return render_template('error.html')
+# @app.errorhandler(Exception)
+# def handle_error(e):
+#     code = 500
+#     if isinstance(e, HTTPException):
+#         code = e.code
+#     return render_template('error.html')
 
 # ---------------------------- #
 #           MAIN               #
