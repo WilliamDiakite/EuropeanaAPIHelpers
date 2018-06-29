@@ -1,16 +1,52 @@
 $(document).ready(function(){
 
   $("#retryBtn").hide();
+  $("#alertDiv").hide();
+  $("#loadingBtn").hide();
 
-  // USEFUL STUFF
-
-  retryBtn = '<a class="cust" href="/">Recommencer</a>';
-  form = '<button class="cust" type="button" id="taskButton">Task</button>';
+  $('.selectpicker').selectpicker();
+  $('.selectpicker').selectpicker('val', ['TEXT', 'SOUND', 'IMAGE', 'VIDEO']);
 
 
   // SEND FORM
 
   $("#taskButton").click(function(e) {
+
+    $("#alertDiv").hide();
+
+    usr_data = {
+            'key': $("#key").val(),
+            'creator': $("#creator").val(),
+            'type': $("#type").val(),
+            'keywords': $("#keywords").val(),
+            'from': $("#from").val(),
+            'to': $("#to").val(),
+            'places': $("#place").val()
+            }
+
+    // send ajax POST request to start background job
+    $.ajax({
+        type: 'POST',
+        url: '/runTask',
+        data: JSON.stringify(usr_data, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(data, status, request) {
+            $("#loadingBtn").show();
+            $("#taskForm").hide();
+            status_url = request.getResponseHeader('Location');
+            update_progress(status_url);
+        },
+        error: function() {
+            alert('Unexpected error');
+        }
+    });
+    e.preventDefault();
+  });
+
+
+  $("#retryBtn").click(function(e) {
+
+    $("#alertDiv").hide();
 
     usr_data = {
             'key': $("#key").val(),
@@ -23,68 +59,82 @@ $(document).ready(function(){
             'to': $("#to").val(),
             }
 
+    // send ajax POST request to start background job
     $.ajax({
-          type: "POST",
-          url:'/runTask',
-          data: JSON.stringify(usr_data, null, '\t'),
-          contentType: 'application/json;charset=UTF-8',
-     });
+        type: 'POST',
+        url: '/runTask',
+        data: JSON.stringify(usr_data, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(data, status, request) {
+            $("#retryBtn").hide();
+            $("#taskForm").hide();
+            $("#loadingBtn").show();
+            status_url = request.getResponseHeader('Location');
+            update_progress(status_url);
+        },
+        error: function() {
+            alert('Unexpected error');
+        }
+    });
     e.preventDefault();
   });
 
+  //retryBtn = '<a class="cust" href="/">Recommencer</a>';
+  retryBtn = '<button class="cust" type="button" id="retryBtn">Recommencer</button>';
+  form = '<button class="cust" type="button" id="taskButton">Task</button>';
 
 
-  // WAIT FOR JOB TO BE DONE
-
-  var namespace='/long_task';
-  var socket = io.connect('http://' + document.domain + ':' + location.port+namespace);
-
-  socket.on('connect', function() {
-    socket.emit('join_room');
-  });
-
-  socket.on('working', function() {
-    $("#taskForm").empty();
-    $("#taskForm").html('<button class="cust"><i class="fa fa-circle-o-notch fa-spin"></i>  Récupération...</button>');
-  });
-
-  socket.on('error', function(data) {
-
-    alert = '<div class="alert alert-success"><strong>Une erreur est survenue : </strong>' + data.msg + "</div>";
-    $("#taskForm").html(alert);
-    $("#taskForm").prepend(retryBtn);
-
-    $.ajax({type: "POST",
-          url: '/result',
-          data: JSON.stringify('error', null, '\t'),
-          contentType: 'application/json;charset=UTF-8',
-    });
-  });
 
 
-  socket.on('empty', function() {
-    alert = '<div class="alert alert-success">Aucun élément ne correspond à votre requête...</div><br/>';
-    $("#taskForm").empty();
-    $("#taskForm").html(alert);
-    $("#taskForm").prepend(retryBtn);
+  function update_progress(status_url) {
 
-    $.ajax({type: "POST",
-          url: '/result',
-          data: JSON.stringify('empty', null, '\t'),
-          contentType: 'application/json;charset=UTF-8',
-    });
-  });
+      // send GET request to status URL
+      $.getJSON(status_url, function(data) {
 
-  socket.on('done', function(data) {
-    result = data.msg;
-    console.log('this is the entire data');
-    console.log(result);
+        console.log(data.state);
+        console.log(data);
 
-    console.log('ELEMENTS PRESENTS');
-    $("#taskForm").empty();
+          if (data['state'] == 'working') {
+            // rerun in 2 seconds
+            setTimeout(function() {
+                update_progress(status_url);
+            }, 2000);
+          }
+          else if (data['state'] == 'empty') {
+            $("#taskForm").hide();
+            $("#loadingBtn").show();
+            $("#retryBtn").show();
 
-    displ_url = '/display/' + result.dir;
-    $("#taskForm").html('<a class="cust" href="' + displ_url + '"><h4>Results</h4></a>');
+            alert = '<div class="alert alert-success">Aucun élément ne correspond à votre requête...</div><br/>';
+            $("#alertDiv").show();
+            $("#loadingBtn").hide();
+            $("#alertDiv").html(alert);
 
-  });
+            setTimeout(function() {
+                delayed_dir_cleaning(data['dir']);
+            }, 500000);
+          }
+          else if (data['state'] == 'error') {
+            alert = '<div class="alert alert-success"><strong>Une erreur est survenue : </strong>' + data.error + "</div>";
+            $("#taskForm").hide();
+            $("#loadingBtn").hide();
+            $("#alertDiv").html(alert)
+            $("#alertDiv").show();
+            $("#retryBtn").show();
+
+            setTimeout(function() {
+                delayed_dir_cleaning(data['dir']);
+            }, 500000);
+          }
+          else if (data['state'] == 'loaded') {
+            u = '/display/' + data['dir'];
+            location.replace(u);
+            setTimeout(function() {
+                delayed_dir_cleaning(data['dir']);
+            }, 500000);
+          }
+
+      });
+  };
+
 });

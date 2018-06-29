@@ -4,90 +4,81 @@
 <!-- Filtre Dublin Core -->
   <div class='container'>
     <div class="jumbotron">
-      <h4>Paramètres de la recherche</h4>
+      <h3>Paramètres de la recherche</h3>
       <hr class="my-4">
       <br />
       <div class="row">
-       <div class="col-sm-4">
-
-         <label for="keywords"><p>Mots clés :</p></label>
-         <input class="form-control" placeholder="ex. Mona Lisa" id="keywords">
-       </div>
-
+        <div class="col-sm-4">
+          <label for="keywords"><h5>Mots clés :</h5></label>
+          <input class="form-control" placeholder="ex. Mona Lisa" id="keywords">
+        </div>
+        <div class="col-sm-4">
+          <label for="creator"><h5>Créateur•rice :</h5></label>
+          <input class="form-control" placeholder="ex. Mona Lisa" id="creator">
+        </div>
+        <div class="col-sm-4">
+          <label><h5>Type de document :</h5></label>
+          <select class="selectpicker" id="type" multiple>
+            <option value="TEXT">Texte</option>
+            <option value="SOUND">Audio</option>
+            <option value="IMAGE">Image</option>
+            <option value="VIDEO">Vidéo</option>
+          </select>
+        </div>
       </div>
+      <br />
       <br />
       <div class="row">
        <div class="col-sm-4">
-         <label for="from"><p>De :</p></label>
+         <label for="from"><h4>De :</h4></label>
          <input class="form-control" id="from" placeholder="ex. 1930">
        </div>
        <div class="col-sm-4">
-         <label for="to"><p>À :</p></label>
+         <label for="to"><h4>À :</h4></label>
          <input class="form-control" id="to" placeholder="ex. 1975">
        </div>
-      </div>
-      <br />
-      <br />
-      <br />
-      <br />
-
-      <h4>Paramètres avancés</h4>
-      <hr class="my-4">
-      <br />
-      <div class="row">
        <div class="col-sm-4">
-         <label for="creator"><p>Créateur :</p></label>
-         <input class="form-control" id="creator" placeholder="ex. John Doe">
-       </div>
-       <div class="col-sm-4">
-         <label for="date"><p>Date de création :</p></label>
-         <input class="form-control" id="date" placeholder="aaaa">
-       </div>
-      </div>
-      <br />
-      <div class="row">
-       <div class="col-sm-4">
-         <label for="items_type"><p>Type de document :</p></label>
-         <input class="form-control" id="items_type" placeholder="ex. TEXT">
-       </div>
-       <div class="col-sm-4">
-         <label for="items_dataProvider"><p>Provider :</p></label>
-         <input class="form-control" id="items_dataProvider" placeholder="ex. Centre Georges Pompidou">
+         <label for="to"><h4>Lieux :</h4></label>
+         <input class="form-control" id="place" placeholder="ex. Paris, London">
        </div>
       </div>
     </div>
   </div>
 
   <div class="container">
-        <div class="row">
+    <div class="jumbotron">
 
+      <h3>Éxécution de la requête</h3>
+      <hr class="my-4">
+
+      <div class="row">
+        <div class="col-sm-1"></div>
+
+        <div class="col-sm-5">
           <!-- Clé Publique -->
-          <div class="col">
-            <div class="jumbotron">
-              <h4>Authentification</h4>
-              <hr class="my-4">
-              <br />
-              <label for="key"><p>Clé publique :</p></label>
-              <input type="text" class="form-control" id="key">
-            </div>
-          </div>
-
-          <!-- Submit -->
-          <div class="col">
-            <div class="jumbotron">
-              <h4>Exécuter la requête</h4>
-              <hr class="my-4">
-              <br />
-              <div class="row">
-                <div class="col">
-                  <form method='post' id="taskForm">
-                    <button class="cust" type="button" id="taskButton">Exécuter</button>
-                  </form>
-                  <!-- <a class="cust" href="/">Recommencer</a> -->
-                  <div id="Results"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <label for="key"><h4>Clé publique :</h4></label>
+          <input type="text" class="form-control" id="key">
+          <br />
+          <a href="https://pro.europeana.eu/get-api">Demandez votre clé publique</a>
+          <br />
         </div>
+
+        <div class="col-sm-1"></div>
+
+        <div class="col-sm-5">
+          <br />
+          <br />
+          <form method='post' id="taskForm">
+            <button class="cust" type="button" id="taskButton">Exécuter</button>
+          </form>
+          <button class="cust" id="loadingBtn" onclick=""><i class="fa fa-circle-o-notch fa-spin"></i>  Récupération...</button>
+          <button class="cust" type="button" id="retryBtn">Exécuter à nouveau</button>
+          <div id="alertDiv"></div>
+        </div>
+        <br />
+
+      </div>
+
+    </div>
+  </div>
 {% endblock %}

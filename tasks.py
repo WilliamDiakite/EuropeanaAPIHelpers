@@ -1,40 +1,33 @@
-import os
 from celery import Celery
-from flask_socketio import SocketIO
 from api_caller import execute_query
 
 
-celery = Celery('europeana-search')
-socketio = SocketIO(message_queue='amqp:///socketio')
+celery = Celery()
 
-celery.conf.update(BROKER_URL=os.environ['REDIS_URL'],
-                   CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+celery.config_from_object('celery_settings')
 
 
-def send_message(event, namespace, room, message):
-    print(message)
-    socketio.emit(event, {'msg': message}, namespace=namespace, room=room)
+@celery.task(bind=True)
+def long_task(self, usr_data):
 
-
-@celery.task
-def long_task(usr_data, session):
-
-    # setting up background task
-    room = session
-    namespace = '/long_task'
-    send_message('working', namespace, room, 'at work')
+    self.update_state(state='working', meta={'message': 'je suis en route'})
 
     # Execute background task
-    result = execute_query(usr_data, session)
+    result = execute_query(usr_data)
 
-    # Return result message
-    if result['query_status'] is True:
-        if result['data'] is None:
-            send_message('empty', namespace, room, '')
-        else:
-            send_message('done', namespace, room, {
-                'data': result['data'],
-                'dir': result['dir']})
+    self.update_state(state='done', meta=result)
+    return {'state': 'done', 'info': result}
 
-    elif result['query_status'] == 'False':
-        send_message('error', namespace, room, result['error'])
+    # # Return result message
+    # if result['query_status'] is True:
+    #     if result['data'] is None:
+    #         print('EMPTY DATA')
+    #         self.update_state(state='done', meta={'message': 'empty'})
+    #     else:
+    #         print('DATA')
+    #         self.update_state(state='done', meta={'message': 'ok',
+    #                                               'data': result})
+    #
+    # elif result['query_status'] == 'False':
+    #     print('ERROR')
+    #     self.update_state(state='error', meta={'message': result})
