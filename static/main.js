@@ -131,7 +131,7 @@ $(document).ready(function(){
             location.replace(u);
             setTimeout(function() {
                 delayed_dir_cleaning(data['dir']);
-            }, 500000);
+            }, 5000000);
           }
 
       });
