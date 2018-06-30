@@ -74,6 +74,7 @@ def execute_query(usr_data):
     # Create temporary dir to store usr data
     dir_path, dir_name = create_usr_directory(usr_data['root'])
     print('JUST CREATED: {}'.format(dir_name))
+    print(os.listdir('{}/public/'.format(usr_data['root'])))
 
     while(1):
         q = query + cursorMark
@@ -94,7 +95,6 @@ def execute_query(usr_data):
                 items.append(unfold('items', i))
         else:
             print('NO ITEMS IN DATA')
-            print(data)
             break
 
         # Retrive next cursor
