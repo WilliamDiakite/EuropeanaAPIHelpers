@@ -75,10 +75,10 @@ def taskstatus(task_id):
                 print(result['dir'])
                 print(os.listdir('{}/public/'.format(app.root_path)))
 
-                if not os.path.isdir('{}/public/{}'.format(app.root_path, result['dir'])):
-                    os.mkdir('{}/public/{}'.format(app.root_path, result['dir']))
+                if not os.path.isdir('{}/public/{}/'.format(app.root_path, result['dir'])):
+                    os.mkdir('{}/public/{}/'.format(app.root_path, result['dir']))
                     items_to_csv(result['data'],
-                                 '{}/public/{}'.format(app.root_path, result['dir']))
+                                 '{}/public/{}/'.format(app.root_path, result['dir']))
 
                 response = {
                     'state': 'loaded',
