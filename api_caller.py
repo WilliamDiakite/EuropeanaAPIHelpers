@@ -16,14 +16,14 @@ labels = ['items_id', 'items_title', 'items_country', 'items_dataProvider',
           'items_dcCreator', 'items_edmPreview']
 
 
-def create_usr_directory():
+def create_usr_directory(root):
     '''
         Create a unique user directory to store tmp data and output data
         Needed when multiple request are made at the same time
     '''
     dir_name = random.randint(100000, 300000)
 
-    dir_path = './tmpo/{}/'.format(dir_name)
+    dir_path = root + '/tmpo/{}/'.format(dir_name)
     if not os.path.isdir(dir_path):
         os.mkdir(dir_path)
         print('Creating {}'.format(dir_path))
@@ -72,7 +72,8 @@ def execute_query(usr_data):
     print('\nEXECUTING API REQUEST\n')
 
     # Create temporary dir to store usr data
-    dir_path, dir_name = create_usr_directory()
+    dir_path, dir_name = create_usr_directory(usr_data['root'])
+    print('JUST CREATED: {}'.format(dir_name))
 
     while(1):
         q = query + cursorMark
