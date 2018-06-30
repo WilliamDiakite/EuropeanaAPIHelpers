@@ -2,6 +2,7 @@ import tasks
 import csv
 import shutil
 import os
+from utils import items_to_csv
 
 from tasks import long_task
 from flask import Flask, render_template, request, jsonify, Response, url_for
@@ -73,6 +74,7 @@ def taskstatus(task_id):
                 print('SENDING TASK')
                 print(result['dir'])
                 print(os.listdir('{}/public/'.format(app.root_path)))
+                items_to_csv(result['data'], '{}/public/{}/'.format(app.root_path, result['dir']))
                 response = {
                     'state': 'loaded',
                     'data': result['data'],
