@@ -69,20 +69,17 @@ def parse_user_dates(usr_data):
         Return false if problem during parsing,
         else return parsed values
     '''
-    if usr_data['from'] == '':
-        usr_from = 0
-    else:
-        try:
-            usr_from = int(usr_data['from'])
-        except Exception:
-            usr_from = 0
 
-    if usr_data['to'] == '' or not isinstance(usr_data['to'], int):
+    try:
+        usr_from = int(usr_data['from'])
+    except Exception:
+        print('catch {}'.format(usr_data['from']))
+        usr_from = 0
+
+    try:
+        usr_to = int(usr_data['to'])
+    except Exception:
+        print('catch {}'.format(usr_data['to']))
         usr_to = 3000
-    else:
-        try:
-            usr_to = int(usr_data['to'])
-        except Exception:
-            usr_to = 0
 
     return {'from': usr_from, 'to': usr_to}

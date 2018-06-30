@@ -116,15 +116,15 @@ def execute_query(usr_data):
 
     # Filter date
     items = parse_date(items)
-    new_it = []
-    for i in range(len(items)):
-        if items[i]['items_edmTimespanLabelLangAware_def'] >= usr_data['from'] and \
-                items[i]['items_edmTimespanLabelLangAware_def'] <= usr_data['to']:
-            new_it.append(items[i])
-    items = new_it
-
-    if len(usr_data['type']) > 0:
-        items = [i for i in items if i['items_type'] in usr_data['type']]
+    print(usr_data['from'])
+    print(usr_data['to'])
+    print('len {}'.format(len(items)))
+    # [print(i['items_edmTimespanLabelLangAware_def']) for i in items]
+    # items = [i for i in items if i['items_edmTimespanLabelLangAware_def'] >= usr_data['from']]
+    # print('len {}'.format(len(items)))
+    # items = [i for i in items if i['items_edmTimespanLabelLangAware_def'] <= usr_data['to']]
+    # print('len {}'.format(len(items)))
+    items = [i for i in items if i['items_type'] in usr_data['type']]
 
     # Test if any result
     print('[ + ] After filtering, items found:', len(items))
