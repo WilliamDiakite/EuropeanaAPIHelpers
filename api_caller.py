@@ -23,7 +23,7 @@ def create_usr_directory(root):
     '''
     dir_name = random.randint(100000, 300000)
 
-    dir_path = root + '/tmpo/{}/'.format(dir_name)
+    dir_path = root + '/public/{}/'.format(dir_name)
     if not os.path.isdir(dir_path):
         os.mkdir(dir_path)
         print('Creating {}'.format(dir_path))

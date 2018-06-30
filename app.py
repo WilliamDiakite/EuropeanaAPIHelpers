@@ -99,13 +99,13 @@ def taskstatus(task_id):
 def display(dir_name):
 
     # Read csv to display
-    f_path = app.root_path + '/tmpo/' + dir_name + '/output.csv'
+    f_path = app.root_path + '/public/' + dir_name + '/output.csv'
     try:
         with open(f_path) as f:
             items = [i for i in csv.DictReader(f)]
     except FileNotFoundError:
         print(f_path)
-        print(os.listdir('./tmpo/{}/'.format(dir_name)))
+        print(os.listdir('{}/public/'.format(app.root_path)))
 
     # Create download urls
     csv_url = '/download-csv/' + dir_name
@@ -124,7 +124,7 @@ def clean(dir_name):
     print('Cleaning demand received')
     if request.method == 'POST':
         try:
-            dir_path = app.root_path + '/tmpo/' + dir_name
+            dir_path = app.root_path + '/public/' + dir_name
             shutil.rmtree(dir_path)
             print(dir_name, ' has been removed !')
         except Exception as e:
@@ -140,7 +140,7 @@ def clean(dir_name):
 @app.route('/download-csv/<dir_name>', methods=['GET', 'POST'])
 def download_csv(dir_name):
     print('demande de téléchargement pour :', dir_name)
-    file_path = app.root_path + '/tmpo/' + dir_name + '/output.csv'
+    file_path = app.root_path + '/public/' + dir_name + '/output.csv'
     with open(file_path) as f:
         data = f.read()
     return Response(
@@ -153,7 +153,7 @@ def download_csv(dir_name):
 @app.route('/download-json/<dir_name>', methods=['GET', 'POST'])
 def download_json(dir_name):
     print('demande de téléchargement pour :', dir_name)
-    file_path = app.root_path + '/tmpo/' + dir_name + '/output.json'
+    file_path = app.root_path + '/public/' + dir_name + '/output.json'
     with open(file_path) as f:
         data = f.read()
     return Response(
@@ -166,7 +166,7 @@ def download_json(dir_name):
 @app.route('/download-xml/<dir_name>', methods=['GET', 'POST'])
 def download_xml(dir_name):
     print('demande de téléchargement pour :', dir_name)
-    file_path = app.root_path + '/tmpo/' + dir_name + '/output.xml'
+    file_path = app.root_path + '/public/' + dir_name + '/output.xml'
     with open(file_path) as f:
         data = f.read()
     return Response(
