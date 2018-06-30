@@ -70,8 +70,12 @@ def taskstatus(task_id):
             # Data available after api call
             else:
                 print('data available in query result')
+                print('SENDING TASK')
+                print(result['dir'])
+                print(os.listdir('{}/public/'.format(app.root_path)))
                 response = {
                     'state': 'loaded',
+                    'data': result['data'],
                     'dir': result['dir']
                 }
 

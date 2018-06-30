@@ -122,16 +122,16 @@ $(document).ready(function(){
             $("#alertDiv").show();
             $("#retryBtn").show();
 
-            setTimeout(function() {
-                delayed_dir_cleaning(data['dir']);
-            }, 500000);
+            // setTimeout(function() {
+            //     delayed_dir_cleaning(data['dir']);
+            // }, 500000);
           }
           else if (data['state'] == 'loaded') {
             u = '/display/' + data['dir'];
             location.replace(u);
-            setTimeout(function() {
-                delayed_dir_cleaning(data['dir']);
-            }, 5000000);
+            // setTimeout(function() {
+            //     delayed_dir_cleaning(data['dir']);
+            // }, 5000000);
           }
 
       });
