@@ -78,7 +78,7 @@ def taskstatus(task_id):
                 if not os.path.isdir('{}/public/{}/'.format(app.root_path, result['dir'])):
                     os.mkdir('{}/public/{}/'.format(app.root_path, result['dir']))
                     items_to_csv(result['data'],
-                                 '{}/public/{}/'.format(app.root_path, result['dir']))
+                                 '{}/public/{}/output.csv'.format(app.root_path, result['dir']))
 
                 response = {
                     'state': 'loaded',
