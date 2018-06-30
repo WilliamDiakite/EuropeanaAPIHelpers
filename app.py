@@ -4,7 +4,6 @@ import shutil
 
 from tasks import long_task
 from flask import Flask, render_template, request, jsonify, Response, url_for
-from werkzeug.exceptions import HTTPException
 
 
 # ---------------------------- #
@@ -98,7 +97,7 @@ def taskstatus(task_id):
 def display(dir_name):
 
     # Read csv to display
-    f_path = './tmp/' + dir_name + '/output.csv'
+    f_path = './tmpo/' + dir_name + '/output.csv'
     with open(f_path) as f:
         items = [i for i in csv.DictReader(f)]
 
@@ -119,7 +118,7 @@ def clean(dir_name):
     print('Cleaning demand received')
     if request.method == 'POST':
         try:
-            dir_path = './tmp/' + dir_name
+            dir_path = './tmpo/' + dir_name
             shutil.rmtree(dir_path)
             print(dir_name, ' has been removed !')
         except Exception as e:
@@ -135,7 +134,7 @@ def clean(dir_name):
 @app.route('/download-csv/<dir_name>', methods=['GET', 'POST'])
 def download_csv(dir_name):
     print('demande de téléchargement pour :', dir_name)
-    file_path = './tmp/' + dir_name + '/output.csv'
+    file_path = './tmpo/' + dir_name + '/output.csv'
     with open(file_path) as f:
         data = f.read()
     return Response(
@@ -148,7 +147,7 @@ def download_csv(dir_name):
 @app.route('/download-json/<dir_name>', methods=['GET', 'POST'])
 def download_json(dir_name):
     print('demande de téléchargement pour :', dir_name)
-    file_path = './tmp/' + dir_name + '/output.json'
+    file_path = './tmpo/' + dir_name + '/output.json'
     with open(file_path) as f:
         data = f.read()
     return Response(
@@ -161,7 +160,7 @@ def download_json(dir_name):
 @app.route('/download-xml/<dir_name>', methods=['GET', 'POST'])
 def download_xml(dir_name):
     print('demande de téléchargement pour :', dir_name)
-    file_path = './tmp/' + dir_name + '/output.xml'
+    file_path = './tmpo/' + dir_name + '/output.xml'
     with open(file_path) as f:
         data = f.read()
     return Response(

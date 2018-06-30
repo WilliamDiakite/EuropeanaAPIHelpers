@@ -23,9 +23,10 @@ def create_usr_directory():
     '''
     dir_name = random.randint(100000, 300000)
 
-    dir_path = './tmp/{}/'.format(dir_name)
+    dir_path = './tmpo/{}/'.format(dir_name)
     if not os.path.isdir(dir_path):
         os.mkdir(dir_path)
+        print('Creating {}'.format(dir_path))
 
     return dir_path, dir_name
 
