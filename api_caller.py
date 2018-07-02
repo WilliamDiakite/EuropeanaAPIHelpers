@@ -45,8 +45,9 @@ def parse_query(usr_data):
     if usr_data.get('places') != '' and usr_data.get('places') is not None:
         places = '+where:' + '"' + quote(usr_data['places'], safe='') + '"'
 
-    time = '+timestamp_created:[{}-01-01T00:00:0.000Z+TO+{}-01-01T00:00:00.000Z]'.format(
-        usr_data['from'], usr_data['to'])
+    # time = '+timestamp_created:[{}-01-01T00:00:0.000Z+TO+{}-01-01T00:00:00.000Z]'.format(
+    #     usr_data['from'], usr_data['to'])
+    time = ''
 
     query = 'https://www.europeana.eu/api/v2/search.json?wskey={}&rows=100&query={}{}{}{}&cursor='.format(
         usr_data['key'], keywords, creator, places, time)
@@ -120,9 +121,9 @@ def execute_query(usr_data):
     print(usr_data['to'])
     print('len {}'.format(len(items)))
     # [print(i['items_edmTimespanLabelLangAware_def']) for i in items]
-    # items = [i for i in items if i['items_edmTimespanLabelLangAware_def'] >= usr_data['from']]
+    items = [i for i in items if i['items_edmTimespanLabelLangAware_def'] >= usr_data['from']]
     # print('len {}'.format(len(items)))
-    # items = [i for i in items if i['items_edmTimespanLabelLangAware_def'] <= usr_data['to']]
+    items = [i for i in items if i['items_edmTimespanLabelLangAware_def'] <= usr_data['to']]
     # print('len {}'.format(len(items)))
     items = [i for i in items if i['items_type'] in usr_data['type']]
 

@@ -29,15 +29,21 @@ def index():
 
 @app.route("/runTask", methods=['POST'])
 def longtask():
-    usr_data = request.json
-    usr_data.update({'root': app.root_path})
-    task = tasks.long_task.delay(usr_data=request.json)
+    if request.method == 'POST':
+        usr_data = request.json
+        usr_data.update({'root': app.root_path})
 
-    print('Background task just started')
-    print(usr_data)
+        # Execute background task
+        task = tasks.long_task.delay(usr_data=request.json)
 
-    return jsonify({}), 202, {'Location': url_for('taskstatus',
-                                                  task_id=task.id)}
+        print('Background task just started')
+        print(usr_data)
+
+        return jsonify({}), 202, {'Location': url_for('taskstatus',
+                                                      task_id=task.id)}
+
+    else:
+        render_template('index.html')
 
 
 @app.route('/status/<task_id>')

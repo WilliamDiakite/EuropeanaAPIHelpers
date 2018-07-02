@@ -52,7 +52,7 @@ $(document).ready(function(){
             'key': $("#key").val(),
             'creator': $("#creator").val(),
             'date': $("#key").val(),
-            'items_type': $("#items_type").val(),
+            'items_type': $("#type").val(),
             'items_dataProvider': $("#items_dataProvider").val(),
             'keywords': $("#keywords").val(),
             'from': $("#from").val(),
